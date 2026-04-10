@@ -76,3 +76,36 @@ model Note {
   updatedAt DateTime @updatedAt
   title     String?
 }
+
+model DataItem {
+  id          String   @id @default(uuid())
+  userId      String
+  title       String
+  description String
+  category    String
+  status      String   @default("Active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  entity    String
+  entityId  String
+  details   String?
+  createdAt DateTime @default(now())
+}
+
+model Report {
+  id         String   @id @default(uuid())
+  title      String
+  userId     String
+  filters    Json
+  sections   String[]
+  status     String   @default("generated")
+  summary    String?
+  pdfUrl     String
+  createdAt  DateTime @default(now())
+}

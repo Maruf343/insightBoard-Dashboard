@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { analyticsMetrics as defaultMetrics, type Metric } from '../../data/metrics';
@@ -112,10 +113,12 @@ const segmentOptions = ['All customers', 'Enterprise', 'SMB', 'Trials'];
 const reportTabs = ['Summary', 'Pipeline', 'Performance'];
 
 const sectionMessages: Record<string, string> = {
-  Overview: 'View a consolidated snapshot of revenue, customer health, and product momentum.',
+  Dashboard: 'View a consolidated snapshot of revenue, customer health, and product momentum.',
   Customers: 'Track customer onboarding, expansion, and retention across key segments.',
-  Revenue: 'Focus on contract value, MRR growth, and recurring revenue performance.',
-  Insights: 'Review core signals and growth trends across the platform.',
+  Leads: 'Manage lead flow, qualification, and sales follow-ups in a single view.',
+  Deals: 'Monitor deal stages, pipeline velocity, and expected close values.',
+  Reports: 'Access generated reports and performance summaries across your team.',
+  Settings: 'Update your preferences, profile, and workspace controls.',
 };
 
 const insightMessages: Record<string, string> = {
@@ -247,7 +250,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [selectedRange, setSelectedRange] = useState('30d');
   const [selectedSegment, setSelectedSegment] = useState('All customers');
-  const [selectedSection, setSelectedSection] = useState('Overview');
+  const [selectedSection, setSelectedSection] = useState('Dashboard');
   const [isLoading, setIsLoading] = useState(true);
   const [settings, setSettings] = useState<DashboardSettings>(defaultSettings);
   const [activeSettingsTab, setActiveSettingsTab] = useState('Profile Settings');
@@ -470,7 +473,7 @@ export default function DashboardPage() {
   if (authLoading) {
     return (
       <div className="min-h-screen bg-base text-base">
-        <div className="flex min-h-screen items-center justify-center px-6 text-white">
+        <div className="flex min-h-screen items-center justify-center px-6 text-[color:var(--text)]">
           <div className="rounded-3xl border border-panel bg-panel px-10 py-12 shadow-panel">
             <div className="flex flex-col items-center gap-4">
               <div className="h-12 w-12 animate-spin rounded-full border-4 border-brand border-t-transparent" />
@@ -488,6 +491,14 @@ export default function DashboardPage() {
   }
 
   const isDarkMode = settings.appearance.theme === 'dark';
+  const profileDisplayName =
+    currentUser?.displayName || currentUser?.email?.split('@')[0].replace('.', ' ') || 'Guest User';
+  const profileInitials = profileDisplayName
+    .split(' ')
+    .map((part) => part[0] ?? '')
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
   const compactModeClass = settings.appearance.compactMode ? 'space-y-6 px-5' : 'space-y-8 px-6';
 
   return (
@@ -504,6 +515,7 @@ export default function DashboardPage() {
               setSidebarOpen(false);
             }}
             onClose={() => setSidebarOpen(false)}
+            onSignOut={handleSignOut}
             className="h-full"
           />
         </div>
@@ -511,7 +523,7 @@ export default function DashboardPage() {
 
       <div className="grid min-h-screen grid-cols-1 gap-6 lg:grid-cols-[280px_1fr] xl:gap-8">
         <div className="hidden lg:block">
-          <Sidebar activeSection={selectedSection} onChangeSection={setSelectedSection} />
+          <Sidebar activeSection={selectedSection} onChangeSection={setSelectedSection} onSignOut={handleSignOut} />
         </div>
         <main className={`${compactModeClass} pb-10 pt-6 sm:px-8 xl:px-12`}>
           <section className="rounded-[32px] border border-panel bg-panel/95 p-6 shadow-soft sm:p-8">
@@ -531,35 +543,28 @@ export default function DashboardPage() {
                 >
                   Menu
                 </button>
-                <DropdownMenu
-                  label="Actions"
-                  items={[
-                    { id: 'new', label: 'Create activity', onClick: handleOpenCreateModal },
-                    { id: 'refresh', label: 'Force refresh', onClick: handleRefresh },
-                    { id: 'export', label: 'Export report', onClick: handleExport },
-                  ]}
-                />
-                <button
-                  type="button"
-                  onClick={handleRefresh}
-                  className="rounded-full border border-panel bg-surface/90 px-4 py-2 text-sm transition hover:bg-surface"
-                >
-                  Refresh
-                </button>
-                <button
-                  type="button"
-                  onClick={handleExport}
-                  className="rounded-full border border-brand bg-brand-soft px-4 py-2 text-sm font-semibold text-brand transition hover:bg-brand/20"
-                >
-                  Export
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSignOut}
-                  className="rounded-full border border-panel bg-surface/90 px-4 py-2 text-sm transition hover:bg-surface"
-                >
-                  Sign out
-                </button>
+                <div className="flex flex-wrap items-center gap-3 rounded-[28px] border border-panel bg-surface/90 p-3 shadow-soft">
+                  <div className="inline-flex items-center gap-3 rounded-full bg-brand-soft px-3 py-2">
+                    <span className="inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-brand text-white">
+                      {currentUser?.photoURL ? (
+                        <img src={currentUser.photoURL} alt={profileDisplayName} className="h-full w-full object-cover" />
+                      ) : (
+                        <span>{profileInitials}</span>
+                      )}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-[color:var(--text)]">{profileDisplayName}</p>
+                      <p className="truncate text-xs text-[color:var(--muted)]">{currentUser?.email ?? 'No email'}</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    className="rounded-full border border-panel bg-base px-4 py-2 text-sm font-semibold text-[color:var(--text)] transition hover:bg-surface"
+                  >
+                    Sign out
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -632,7 +637,7 @@ export default function DashboardPage() {
                 <p className="mt-4 text-sm leading-7 text-muted">{insightText}</p>
               </div>
               <div className="rounded-[28px] border border-brand bg-brand-soft p-5 shadow-soft">
-                <p className="text-sm uppercase tracking-[0.28em] text-brand">What's trending</p>
+                <p className="text-sm uppercase tracking-[0.28em] text-brand">What&apos;s trending</p>
                 <p className="mt-4 text-4xl font-semibold">+18%</p>
                 <p className="mt-2 text-sm text-muted">More users are converting compared to last 30 days.</p>
               </div>
@@ -656,7 +661,7 @@ export default function DashboardPage() {
                   metrics.map((metric) => <MetricCard key={metric.title} metric={metric} loading={isLoading} />)
                 ) : (
                   <div className="col-span-full rounded-3xl border border-panel bg-surface p-6 text-center text-muted shadow-panel">
-                    <p className="text-lg font-semibold text-white">No metrics available</p>
+                    <p className="text-lg font-semibold text-[color:var(--text)]">No metrics available</p>
                     <p className="mt-3 text-sm">Create dashboard data or connect your data source to populate metrics.</p>
                   </div>
                 )}
@@ -799,7 +804,7 @@ export default function DashboardPage() {
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block text-sm text-muted">
-            <span className="text-white">User</span>
+            <span className="text-[color:var(--text)]">User</span>
             <input
               type="text"
               value={draftActivity.user}
@@ -809,7 +814,7 @@ export default function DashboardPage() {
             />
           </label>
           <label className="block text-sm text-muted">
-            <span className="text-white">Segment</span>
+            <span className="text-[color:var(--text)]">Segment</span>
             <select
               value={draftActivity.segment}
               onChange={(event) => setDraftActivity((current) => ({ ...current, segment: event.target.value }))}
@@ -823,7 +828,7 @@ export default function DashboardPage() {
             </select>
           </label>
           <label className="block text-sm text-muted">
-            <span className="text-white">Action</span>
+            <span className="text-[color:var(--text)]">Action</span>
             <input
               type="text"
               value={draftActivity.action}
@@ -833,7 +838,7 @@ export default function DashboardPage() {
             />
           </label>
           <label className="block text-sm text-muted">
-            <span className="text-white">Value</span>
+            <span className="text-[color:var(--text)]">Value</span>
             <input
               type="text"
               value={draftActivity.value}
@@ -843,7 +848,7 @@ export default function DashboardPage() {
             />
           </label>
           <label className="block text-sm text-muted sm:col-span-2">
-            <span className="text-white">Timestamp</span>
+            <span className="text-[color:var(--text)]">Timestamp</span>
             <input
               type="text"
               value={draftActivity.time}

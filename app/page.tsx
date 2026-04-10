@@ -21,14 +21,14 @@ const features = [
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-base px-6 py-8 text-base text-white sm:px-10">
-      <div className="mx-auto flex max-w-7xl flex-col gap-16">
+    <main className="min-h-screen bg-base px-6 py-8 text-base text-[color:var(--text)] sm:px-10">
+      <div className="mx-auto flex max-w-7xl flex-col gap-14">
         <header className="flex flex-col gap-6 rounded-[32px] border border-panel bg-panel/95 p-6 shadow-soft sm:flex-row sm:items-center sm:justify-between sm:p-8">
-          <div>
+          <div className="max-w-2xl">
             <p className="text-sm uppercase tracking-[0.28em] text-muted">InsightBoard</p>
-            <h1 className="mt-4 text-4xl font-semibold sm:text-5xl">Analytics built for modern SaaS teams.</h1>
-            <p className="mt-4 max-w-2xl text-base leading-8 text-muted">
-              Turn product metrics into clarity with a responsive dashboard, segment filtering, and realtime activity insights.
+            <h1 className="mt-4 text-4xl font-semibold sm:text-5xl">A modern CRM analytics experience for SaaS teams.</h1>
+            <p className="mt-4 text-base leading-8 text-muted">
+              Launch a professional dashboard with Firebase authentication, Prisma data persistence, and a responsive CRM-style navigation layout.
             </p>
           </div>
 
@@ -38,40 +38,40 @@ export default function HomePage() {
                 href="/login"
                 className="rounded-full bg-brand px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand/90"
               >
-                Start free demo
+                Start demo
               </Link>
               <Link
                 href="/dashboard"
-                className="rounded-full border border-panel bg-surface/90 px-5 py-3 text-sm font-semibold text-white transition hover:bg-surface"
+                className="rounded-full border border-panel bg-surface/90 px-5 py-3 text-sm font-semibold text-[color:var(--text)] transition hover:bg-surface"
               >
-                View dashboard
+                Open dashboard
               </Link>
             </div>
-            <p className="text-sm text-muted">Firebase authentication, Tailwind UI, and Prisma-ready analytics.</p>
+            <p className="text-sm text-muted">Responsive layout, dark/light theme, and CRM-style workspace flow.</p>
           </div>
         </header>
 
-        <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+        <section className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
           <div className="space-y-6 rounded-[32px] border border-panel bg-panel/95 p-8 shadow-soft">
             <div className="inline-flex rounded-full bg-brand-soft px-4 py-2 text-sm font-semibold text-brand">
               Portfolio-ready SaaS analytics
             </div>
             <div className="space-y-4">
-              <h2 className="text-3xl font-semibold">Build trust with a dashboard that feels like a real product.</h2>
+              <h2 className="text-3xl font-semibold">A polished dashboard experience with CRM-grade styling.</h2>
               <p className="max-w-xl text-muted">
-                Showcase your engineering and design skills with a working admin experience that includes metrics, growth insights, activity feeds, and interactive controls.
+                Take a modern UI, combine it with user-scoped data and activity insights, and present a professional analytics workspace.
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-[28px] bg-surface/90 p-5 shadow-soft">
                 <p className="text-sm uppercase tracking-[0.28em] text-muted">Revenue</p>
                 <p className="mt-3 text-3xl font-semibold">$124K</p>
-                <p className="mt-2 text-sm text-muted">Daily metrics with trend analysis and benchmarks.</p>
+                <p className="mt-2 text-sm text-muted">Daily revenue, trends, and forecasts in a single view.</p>
               </div>
               <div className="rounded-[28px] bg-surface/90 p-5 shadow-soft">
                 <p className="text-sm uppercase tracking-[0.28em] text-muted">Retention</p>
                 <p className="mt-3 text-3xl font-semibold">82%</p>
-                <p className="mt-2 text-sm text-muted">Customer signals that drive better product decisions.</p>
+                <p className="mt-2 text-sm text-muted">Track customer stickiness across your key cohorts.</p>
               </div>
             </div>
           </div>
@@ -79,10 +79,10 @@ export default function HomePage() {
           <div className="rounded-[32px] border border-panel bg-surface/95 p-8 shadow-soft">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-sm uppercase tracking-[0.28em] text-muted">Live preview</p>
-                <h3 className="mt-2 text-xl font-semibold">Overview snapshot</h3>
+                <p className="text-sm uppercase tracking-[0.28em] text-muted">Workspace preview</p>
+                <h3 className="mt-2 text-xl font-semibold">CRM analytics dashboard</h3>
               </div>
-              <span className="rounded-full bg-brand-soft px-3 py-1 text-sm text-brand">Updated now</span>
+              <span className="rounded-full bg-brand-soft px-3 py-1 text-sm text-brand">Live sample</span>
             </div>
             <div className="mt-8 space-y-5">
               <div className="flex items-center justify-between rounded-3xl bg-base p-5">
@@ -112,7 +112,7 @@ export default function HomePage() {
         <section className="grid gap-6 lg:grid-cols-4">
           {features.map((feature) => (
             <div key={feature.title} className="rounded-[28px] border border-panel bg-panel/95 p-6 shadow-soft">
-              <h3 className="text-xl font-semibold">{feature.title}</h3>
+              <h3 className="text-xl font-semibold text-[color:var(--text)]">{feature.title}</h3>
               <p className="mt-3 text-sm leading-7 text-muted">{feature.description}</p>
             </div>
           ))}
@@ -122,9 +122,9 @@ export default function HomePage() {
           <div className="grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-center">
             <div>
               <p className="text-sm uppercase tracking-[0.28em] text-muted">Built for polished demos</p>
-              <h2 className="mt-4 text-3xl font-semibold">Deliver an analytics experience that feels finished.</h2>
+              <h2 className="mt-4 text-3xl font-semibold">Deliver a complete analytics workflow.</h2>
               <p className="mt-4 max-w-2xl text-muted">
-                InsightBoard gives you a strong portfolio narrative: a real Next.js app with tailored dashboard interactions, authentication, and responsive layout.
+                InsightBoard combines dashboard architecture, authentication, reporting, and modern layout into a professional SaaS experience.
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -141,7 +141,7 @@ export default function HomePage() {
         </section>
 
         <footer className="rounded-[32px] border border-panel bg-surface/95 p-6 text-center text-sm text-muted shadow-soft">
-          Crafted as a portfolio-ready analytics dashboard with modern SaaS polish.
+          Crafted as a responsive, modern CRM analytics dashboard for SaaS teams.
         </footer>
       </div>
     </main>

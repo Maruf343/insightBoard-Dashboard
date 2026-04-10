@@ -25,13 +25,13 @@ export default function TrendChart({ loading }: { loading?: boolean }) {
 
   if (loading) {
     return (
-      <div className="animate-pulse rounded-3xl border border-panel bg-panel p-6 shadow-panel">
+      <div className="animate-pulse rounded-[32px] border border-panel bg-panel p-6 shadow-soft">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="space-y-3">
             <div className="h-4 w-24 rounded-full bg-surface" />
             <div className="h-5 w-52 rounded-full bg-surface" />
           </div>
-          <div className="h-12 w-28 rounded-3xl bg-surface" />
+          <div className="h-12 w-28 rounded-[28px] bg-surface" />
         </div>
         <div className="mt-8 h-72 rounded-[2rem] bg-surface" />
       </div>
@@ -39,7 +39,7 @@ export default function TrendChart({ loading }: { loading?: boolean }) {
   }
 
   return (
-    <div className="rounded-3xl border border-panel bg-panel p-6 shadow-panel transition duration-300 hover:-translate-y-0.5 hover:border-brand/30">
+    <div className="rounded-[32px] border border-panel bg-panel p-6 shadow-soft transition duration-300 hover:border-brand/30">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm uppercase tracking-[0.32em] text-muted">Trend</p>

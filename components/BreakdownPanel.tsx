@@ -7,7 +7,7 @@ type Breakdown = {
 export default function BreakdownPanel({ data, loading }: { data?: Breakdown[]; loading?: boolean }) {
   if (loading) {
     return (
-      <div className="animate-pulse rounded-3xl border border-panel bg-panel p-6 shadow-panel">
+      <div className="animate-pulse rounded-[32px] border border-panel bg-panel p-6 shadow-soft">
         <div className="h-10 w-3/4 rounded-full bg-surface" />
         <div className="mt-6 space-y-4">
           {[...Array(4)].map((_, index) => (
@@ -38,7 +38,7 @@ export default function BreakdownPanel({ data, loading }: { data?: Breakdown[]; 
   }
 
   return (
-    <div className="rounded-3xl border border-panel bg-panel p-6 shadow-panel transition duration-300 hover:-translate-y-0.5 hover:border-brand/30">
+    <div className="rounded-[32px] border border-panel bg-panel p-6 shadow-soft transition duration-300 hover:border-brand/30">
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-sm uppercase tracking-[0.32em] text-muted">Users by country</p>

@@ -20,28 +20,43 @@ const points: TrendPoint[] = [
   { label: 'Dec', value: 128 },
 ];
 
-export default function TrendChart() {
+export default function TrendChart({ loading }: { loading?: boolean }) {
   const maxValue = Math.max(...points.map((point) => point.value));
 
+  if (loading) {
+    return (
+      <div className="animate-pulse rounded-3xl border border-panel bg-panel p-6 shadow-panel">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-3">
+            <div className="h-4 w-24 rounded-full bg-surface" />
+            <div className="h-5 w-52 rounded-full bg-surface" />
+          </div>
+          <div className="h-12 w-28 rounded-3xl bg-surface" />
+        </div>
+        <div className="mt-8 h-72 rounded-[2rem] bg-surface" />
+      </div>
+    );
+  }
+
   return (
-    <div className="rounded-3xl border border-white/10 bg-slate-900/90 p-6 shadow-soft backdrop-blur">
+    <div className="rounded-3xl border border-panel bg-panel p-6 shadow-panel transition duration-300 hover:-translate-y-0.5 hover:border-brand/30">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.32em] text-slate-500">Trend</p>
-          <h2 className="mt-2 text-2xl font-semibold text-white">Revenue growth</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">
+          <p className="text-sm uppercase tracking-[0.32em] text-muted">Trend</p>
+          <h2 className="mt-2 text-2xl font-semibold">Revenue growth</h2>
+          <p className="mt-2 text-sm leading-6 text-muted">
             Weekly revenue and activation trends across the product funnel.
           </p>
         </div>
-        <div className="rounded-3xl bg-slate-950/70 px-4 py-3 text-sm text-slate-200">
-          <p className="text-slate-400">Current run rate</p>
-          <p className="mt-1 text-lg font-semibold text-white">$124.8K</p>
+        <div className="rounded-3xl bg-surface px-4 py-3 text-sm">
+          <p className="text-muted">Current run rate</p>
+          <p className="mt-1 text-lg font-semibold">$124.8K</p>
         </div>
       </div>
 
-      <div className="mt-8 overflow-hidden rounded-[2rem] bg-slate-950/80 p-4 sm:p-6">
+      <div className="mt-8 overflow-hidden rounded-[2rem] bg-surface/80 p-4 sm:p-6">
         <div className="relative h-72 w-full">
-          <div className="absolute inset-x-0 top-4 flex justify-between text-xs text-slate-600">
+          <div className="absolute inset-x-0 top-4 flex justify-between text-xs text-muted">
             <span>140</span>
             <span>120</span>
             <span>100</span>
@@ -53,7 +68,7 @@ export default function TrendChart() {
           </div>
           <div className="absolute inset-x-0 bottom-0 top-12 opacity-40">
             {[...Array(5)].map((_, index) => (
-              <div key={index} className="absolute left-0 right-0 top-[calc(20%*var(--i))] border-t border-slate-700/60" style={{ '--i': index } as CSSProperties} />
+              <div key={index} className="absolute left-0 right-0 top-[calc(20%*var(--i))] border-t border-surface/20" style={{ '--i': index } as CSSProperties} />
             ))}
           </div>
           <svg className="relative h-full w-full" viewBox="0 0 120 72" preserveAspectRatio="none">
@@ -66,7 +81,7 @@ export default function TrendChart() {
                 })
                 .join(' ')}
               fill="none"
-              stroke="#6366f1"
+              stroke="var(--brand)"
               strokeWidth="2.5"
             />
             <path
@@ -79,7 +94,7 @@ export default function TrendChart() {
               fill="rgba(99, 102, 241, 0.18)"
             />
           </svg>
-          <div className="absolute inset-x-0 bottom-0 flex justify-between text-xs text-slate-500">
+          <div className="absolute inset-x-0 bottom-0 flex justify-between text-xs text-muted">
             {points.map((point) => (
               <span key={point.label}>{point.label}</span>
             ))}

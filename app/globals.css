@@ -5,6 +5,26 @@
 :root {
   color-scheme: dark;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --bg: #020617;
+  --panel: rgba(15, 23, 42, 0.95);
+  --surface: #0f172a;
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --border: rgba(255, 255, 255, 0.08);
+  --brand: #6366f1;
+  --brand-soft: rgba(99, 102, 241, 0.12);
+}
+
+:root.theme-light {
+  color-scheme: light;
+  --bg: #f8fafc;
+  --panel: rgba(255, 255, 255, 0.95);
+  --surface: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #cbd5e1;
+  --brand: #4338ca;
+  --brand-soft: rgba(67, 56, 202, 0.12);
 }
 
 html {
@@ -13,7 +33,8 @@ html {
 
 body {
   min-height: 100vh;
-  background-color: #020617;
+  background-color: var(--bg);
+  color: var(--text);
 }
 
 * {
@@ -25,4 +46,50 @@ input,
 textarea,
 select {
   font: inherit;
+}
+
+body {
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+@layer utilities {
+  .bg-base {
+    background-color: var(--bg) !important;
+  }
+  .bg-panel {
+    background-color: var(--panel) !important;
+  }
+  .bg-surface {
+    background-color: var(--surface) !important;
+  }
+  .text-muted {
+    color: var(--muted) !important;
+  }
+  .border-panel {
+    border-color: var(--border) !important;
+  }
+  .shadow-panel {
+    box-shadow: 0 15px 40px rgba(15, 23, 42, 0.25);
+  }
+  .bg-brand-soft {
+    background-color: var(--brand-soft) !important;
+  }
+  .text-brand {
+    color: var(--brand) !important;
+  }
+
+  .toast-slide {
+    animation: toast-slide 240ms ease-out both;
+  }
+}
+
+@keyframes toast-slide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }

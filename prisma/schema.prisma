@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String      @id @default(uuid())
+  username          String      @unique
+  email             String      @unique
+  passwordHash      String
+  createdAt         DateTime    @default(now())
+  displayName       String?
+  profilePictureUrl String?
+  lastLoginAt       DateTime?
+  dashboards        Dashboard[]
+}
+
+model Dashboard {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  name        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  description String?
+  isDefault   Boolean
+  widgets     Widget[]
+}
+
+model WidgetType {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  iconUrl     String?
+  widgets     Widget[]
+}
+
+model Widget {
+  id            String     @id @default(uuid())
+  dashboard     Dashboard  @relation(fields: [dashboardId], references: [id])
+  dashboardId   String
+  widgetType    WidgetType @relation(fields: [widgetTypeId], references: [id])
+  widgetTypeId  String
+  positionX     Int
+  positionY     Int
+  width         Int
+  height        Int
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  configuration String?
+  todoItems     TodoItem[]
+  notes         Note[]
+}
+
+model TodoItem {
+  id          String   @id @default(uuid())
+  widget      Widget   @relation(fields: [widgetId], references: [id])
+  widgetId    String
+  description String
+  isCompleted Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  dueDate     DateTime?
+  completedAt DateTime?
+}
+
+model Note {
+  id        String   @id @default(uuid())
+  widget    Widget   @relation(fields: [widgetId], references: [id])
+  widgetId  String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String?
+}

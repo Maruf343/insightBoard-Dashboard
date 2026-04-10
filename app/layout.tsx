@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 
 export const metadata: Metadata = {
   title: 'InsightBoard Analytics',
-  description: 'Modern SaaS analytics dashboard built with Next.js App Router and Tailwind CSS.',
+  description: 'A portfolio-ready SaaS analytics dashboard built with Next.js, Tailwind CSS, Firebase, and Prisma.',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

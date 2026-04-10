@@ -1,20 +1,33 @@
 type SidebarProps = {
   activeSection: string;
   onChangeSection: (section: string) => void;
+  onClose?: () => void;
+  className?: string;
 };
 
-const sections = ['Overview', 'Customers', 'Revenue', 'Insights'];
+const sections = ['Overview', 'Customers', 'Revenue', 'Insights', 'Settings'];
 
-export default function Sidebar({ activeSection, onChangeSection }: SidebarProps) {
+export default function Sidebar({ activeSection, onChangeSection, onClose, className = '' }: SidebarProps) {
   return (
-    <aside className="flex min-h-screen flex-col justify-between border-r border-panel bg-panel/95 px-6 py-8 text-base shadow-soft backdrop-blur-lg lg:px-6 xl:px-8">
+    <aside className={`flex min-h-screen flex-col justify-between border-r border-panel bg-panel/95 px-6 py-8 text-base shadow-soft backdrop-blur-lg lg:px-6 xl:px-8 ${className}`}>
       <div className="space-y-10">
-        <div>
-          <p className="text-xs uppercase tracking-[0.35em] text-muted">InsightBoard</p>
-          <h2 className="mt-4 text-3xl font-semibold">Analytics</h2>
-          <p className="mt-3 max-w-sm text-sm leading-7 text-muted">
-            All of your business metrics in one elegant workspace.
-          </p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.35em] text-muted">InsightBoard</p>
+            <h2 className="mt-4 text-3xl font-semibold">Analytics</h2>
+            <p className="mt-3 max-w-sm text-sm leading-7 text-muted">
+              All of your business metrics in one elegant workspace.
+            </p>
+          </div>
+          {onClose ? (
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-full border border-panel bg-surface px-3 py-2 text-sm font-semibold text-muted transition hover:bg-panel"
+            >
+              Close
+            </button>
+          ) : null}
         </div>
 
         <nav className="space-y-2">

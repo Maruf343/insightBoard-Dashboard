@@ -12,6 +12,7 @@ import BreakdownPanel from '../../components/BreakdownPanel';
 import ActivityTable from '../../components/ActivityTable';
 import DropdownMenu from '../../components/DropdownMenu';
 import Modal from '../../components/Modal';
+import SettingsPanel from '../../components/SettingsPanel';
 import ToggleSwitch from '../../components/ToggleSwitch';
 import ToastContainer from '../../components/ToastContainer';
 import { getFirebaseAuth } from '../../lib/firebase';
@@ -33,6 +34,70 @@ type ToastMessage = {
   title: string;
   description: string;
   type: ToastType;
+};
+
+type ProfileSettings = {
+  name: string;
+  avatarUrl: string;
+  email: string;
+};
+
+type AccountSettings = {
+  plan: string;
+  storageUsed: string;
+  memberSince: string;
+};
+
+type AppearanceSettings = {
+  theme: 'dark' | 'light';
+  compactMode: boolean;
+};
+
+type NotificationSettings = {
+  emailAlerts: boolean;
+  productUpdates: boolean;
+  activityDigest: boolean;
+};
+
+type PrivacySettings = {
+  analyticsSharing: boolean;
+  personalizedContent: boolean;
+  secureSession: boolean;
+};
+
+type DashboardSettings = {
+  profile: ProfileSettings;
+  account: AccountSettings;
+  appearance: AppearanceSettings;
+  notifications: NotificationSettings;
+  privacy: PrivacySettings;
+};
+
+const defaultSettings: DashboardSettings = {
+  profile: {
+    name: 'Avery Morgan',
+    avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=240&q=80',
+    email: 'avery.morgan@insightboard.app',
+  },
+  account: {
+    plan: 'Pro',
+    storageUsed: '42 GB',
+    memberSince: 'Jul 2024',
+  },
+  appearance: {
+    theme: 'dark',
+    compactMode: false,
+  },
+  notifications: {
+    emailAlerts: true,
+    productUpdates: true,
+    activityDigest: false,
+  },
+  privacy: {
+    analyticsSharing: true,
+    personalizedContent: true,
+    secureSession: true,
+  },
 };
 
 const rangeOptions = [
@@ -184,7 +249,8 @@ export default function DashboardPage() {
   const [selectedSegment, setSelectedSegment] = useState('All customers');
   const [selectedSection, setSelectedSection] = useState('Overview');
   const [isLoading, setIsLoading] = useState(true);
-  const [darkMode, setDarkMode] = useState(true);
+  const [settings, setSettings] = useState<DashboardSettings>(defaultSettings);
+  const [activeSettingsTab, setActiveSettingsTab] = useState('Profile Settings');
   const [authLoading, setAuthLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -199,6 +265,7 @@ export default function DashboardPage() {
   const [liveModeEnabled, setLiveModeEnabled] = useState(true);
   const [showBenchmarks, setShowBenchmarks] = useState(true);
   const [activeReportTab, setActiveReportTab] = useState(reportTabs[0]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [editTarget, setEditTarget] = useState<ActivityEntry | null>(null);
@@ -227,6 +294,10 @@ export default function DashboardPage() {
 
   const handleExport = () => {
     pushToast({ title: 'Export started', description: 'Preparing your report for download.', type: 'info' });
+  };
+
+  const handleSettingsUpdate = (update: Partial<DashboardSettings>) => {
+    setSettings((current) => ({ ...current, ...update }));
   };
 
   const handleRangeChange = (range: string) => {
@@ -280,10 +351,26 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
+    const saved = window.localStorage.getItem('insightboardSettings');
+    if (saved) {
+      try {
+        setSettings(JSON.parse(saved));
+      } catch (error) {
+        console.error('Invalid dashboard settings in localStorage:', error);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem('insightboardSettings', JSON.stringify(settings));
+  }, [settings]);
+
+  useEffect(() => {
     const root = document.documentElement;
-    root.classList.toggle('theme-dark', darkMode);
-    root.classList.toggle('theme-light', !darkMode);
-  }, [darkMode]);
+    const isDarkMode = settings.appearance.theme === 'dark';
+    root.classList.toggle('theme-dark', isDarkMode);
+    root.classList.toggle('theme-light', !isDarkMode);
+  }, [settings.appearance.theme]);
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
@@ -400,20 +487,50 @@ export default function DashboardPage() {
     return null;
   }
 
+  const isDarkMode = settings.appearance.theme === 'dark';
+  const compactModeClass = settings.appearance.compactMode ? 'space-y-6 px-5' : 'space-y-8 px-6';
+
   return (
-    <div className="min-h-screen bg-base text-base">
+    <div className="relative min-h-screen bg-base text-base">
       <ToastContainer toasts={toasts} onDismiss={(id) => setToasts((current) => current.filter((toast) => toast.id !== id))} />
+
+      <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+        <div className="absolute left-0 top-0 h-full w-[85vw] max-w-sm overflow-y-auto border-r border-panel bg-panel/95 shadow-2xl">
+          <Sidebar
+            activeSection={selectedSection}
+            onChangeSection={(section) => {
+              setSelectedSection(section);
+              setSidebarOpen(false);
+            }}
+            onClose={() => setSidebarOpen(false)}
+            className="h-full"
+          />
+        </div>
+      </div>
+
       <div className="grid min-h-screen grid-cols-1 gap-6 lg:grid-cols-[280px_1fr] xl:gap-8">
-        <Sidebar activeSection={selectedSection} onChangeSection={setSelectedSection} />
-        <main className="space-y-8 px-6 pb-10 pt-6 sm:px-8 xl:px-12">
+        <div className="hidden lg:block">
+          <Sidebar activeSection={selectedSection} onChangeSection={setSelectedSection} />
+        </div>
+        <main className={`${compactModeClass} pb-10 pt-6 sm:px-8 xl:px-12`}>
           <section className="rounded-[32px] border border-panel bg-panel/95 p-6 shadow-soft sm:p-8">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <div>
-                <p className="text-sm uppercase tracking-[0.32em] text-muted">Business analytics</p>
-                <h1 className="mt-2 text-3xl font-semibold">Revenue & growth overview</h1>
-                <p className="mt-3 max-w-2xl text-muted">{sectionText}</p>
+                <p className="text-sm uppercase tracking-[0.32em] text-muted">{selectedSection === 'Settings' ? 'Workspace settings' : 'Business analytics'}</p>
+                <h1 className="mt-2 text-3xl font-semibold">
+                  {selectedSection === 'Settings' ? 'Personalize your experience' : 'Revenue & growth overview'}
+                </h1>
+                <p className="mt-3 max-w-2xl text-muted">{selectedSection === 'Settings' ? 'Update your profile, account, and preferences with persistent local settings.' : sectionText}</p>
               </div>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSidebarOpen(true)}
+                  className="inline-flex items-center gap-2 rounded-full border border-panel bg-surface/90 px-4 py-2 text-sm font-semibold transition hover:bg-surface lg:hidden"
+                >
+                  Menu
+                </button>
                 <DropdownMenu
                   label="Actions"
                   items={[
@@ -467,13 +584,21 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-sm uppercase tracking-[0.28em] text-muted">Theme</p>
-                    <p className="mt-2 text-lg font-semibold">{darkMode ? 'Dark' : 'Classic'} mode</p>
+                    <p className="mt-2 text-lg font-semibold">{isDarkMode ? 'Dark' : 'Light'} mode</p>
                   </div>
                   <button
-                    onClick={() => setDarkMode((value) => !value)}
+                    onClick={() =>
+                      setSettings((current) => ({
+                        ...current,
+                        appearance: {
+                          ...current.appearance,
+                          theme: current.appearance.theme === 'dark' ? 'light' : 'dark',
+                        },
+                      }))
+                    }
                     className="rounded-full border border-panel bg-base px-4 py-3 text-sm transition hover:bg-surface"
                   >
-                    {darkMode ? 'Switch to classic' : 'Switch to dark'}
+                    {isDarkMode ? 'Switch to light' : 'Switch to dark'}
                   </button>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
@@ -514,18 +639,30 @@ export default function DashboardPage() {
             </div>
           </section>
 
-          <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {metrics.length > 0 ? (
-              metrics.map((metric) => <MetricCard key={metric.title} metric={metric} loading={isLoading} />)
-            ) : (
-              <div className="col-span-full rounded-3xl border border-panel bg-surface p-6 text-center text-muted shadow-panel">
-                <p className="text-lg font-semibold text-white">No metrics available</p>
-                <p className="mt-3 text-sm">Create dashboard data or connect your data source to populate metrics.</p>
-              </div>
-            )}
-          </section>
+          {selectedSection === 'Settings' ? (
+            <section className="rounded-[32px] border border-panel bg-panel/95 p-6 shadow-soft sm:p-8">
+              <SettingsPanel
+                settings={settings}
+                activeTab={activeSettingsTab}
+                onChangeTab={setActiveSettingsTab}
+                onUpdate={handleSettingsUpdate}
+                onNotify={(message) => pushToast({ title: 'Settings updated', description: message, type: 'success' })}
+              />
+            </section>
+          ) : (
+            <>
+              <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                {metrics.length > 0 ? (
+                  metrics.map((metric) => <MetricCard key={metric.title} metric={metric} loading={isLoading} />)
+                ) : (
+                  <div className="col-span-full rounded-3xl border border-panel bg-surface p-6 text-center text-muted shadow-panel">
+                    <p className="text-lg font-semibold text-white">No metrics available</p>
+                    <p className="mt-3 text-sm">Create dashboard data or connect your data source to populate metrics.</p>
+                  </div>
+                )}
+              </section>
 
-          <section className="rounded-[32px] border border-panel bg-panel/95 p-6 shadow-soft sm:p-8">
+              <section className="rounded-[32px] border border-panel bg-panel/95 p-6 shadow-soft sm:p-8">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="text-sm uppercase tracking-[0.32em] text-muted">Insight summary</p>
@@ -632,6 +769,8 @@ export default function DashboardPage() {
               liveMode={liveModeEnabled}
             />
           </section>
+        </>
+        )}
         </main>
       </div>
 

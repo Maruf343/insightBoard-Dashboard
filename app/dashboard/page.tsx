@@ -277,10 +277,18 @@ export default function DashboardPage() {
               </div>
               <div className="flex flex-wrap gap-3">
                 <div className="flex items-center gap-3 rounded-3xl border border-panel bg-surface px-4 py-2 text-sm text-muted">
-                  <span className="block rounded-full bg-brand-soft px-3 py-1 text-sm text-brand">
-                    {currentUser.displayName ? currentUser.displayName : currentUser.email?.split('@')[0]}
-                  </span>
-                  <span>signed in</span>
+                  {currentUser.photoURL ? (
+                    <img
+                      src={currentUser.photoURL}
+                      alt={currentUser.displayName ?? 'Profile'}
+                      className="h-10 w-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-soft text-brand">
+                      {currentUser.displayName?.charAt(0).toUpperCase() ?? currentUser.email?.charAt(0).toUpperCase() ?? 'U'}
+                    </span>
+                  )}
+                  <span>{currentUser.displayName ? currentUser.displayName : currentUser.email?.split('@')[0]}</span>
                 </div>
                 <button
                   type="button"
